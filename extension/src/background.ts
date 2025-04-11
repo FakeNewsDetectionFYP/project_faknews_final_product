@@ -195,6 +195,104 @@ async function saveResults(url: string, results: any): Promise<void> {
     chrome.storage.local.get('processedArticles', (data) => {
       const processedArticles = data.processedArticles || {};
       
+      // Preserve raw credibility data with detailed reasoning
+      if (results.credibility_result) {
+        const credibilityResult = results.credibility_result;
+        
+        // Check if we have raw data with reasoning in credibility_raw_output
+        if (results.credibility_raw_output) {
+          try {
+            // Extract and parse the raw output
+            let rawOutput = results.credibility_raw_output;
+            
+            // Handle cases where the response is wrapped in code fence
+            if (rawOutput.startsWith("```") && rawOutput.endsWith("```")) {
+              rawOutput = rawOutput.substring(3, rawOutput.length - 3).trim();
+            }
+            
+            // If it starts with "json", remove that
+            if (rawOutput.toLowerCase().startsWith("json")) {
+              rawOutput = rawOutput.substring(4).trim();
+            }
+            
+            // Parse the JSON
+            const parsedData = JSON.parse(rawOutput);
+            
+            // Add the detailed reasoning to the stored results
+            if (parsedData.sourceReputationReasoning) {
+              credibilityResult.sourceReputationReasoning = parsedData.sourceReputationReasoning;
+            }
+            if (parsedData.titleContentReasoning) {
+              credibilityResult.titleContentReasoning = parsedData.titleContentReasoning;
+            }
+            if (parsedData.misleadingTitlesReasoning) {
+              credibilityResult.misleadingTitlesReasoning = parsedData.misleadingTitlesReasoning;
+            }
+            if (parsedData.overallConclusion) {
+              credibilityResult.overallConclusion = parsedData.overallConclusion;
+            }
+            
+            // Add the scores as well
+            if (parsedData.sourceReputationScore) {
+              credibilityResult.sourceReputationScore = parsedData.sourceReputationScore;
+            }
+            if (parsedData.titleContentScore) {
+              credibilityResult.titleContentScore = parsedData.titleContentScore;
+            }
+            if (parsedData.misleadingTitlesScore) {
+              credibilityResult.misleadingTitlesScore = parsedData.misleadingTitlesScore;
+            }
+            if (parsedData.averageScore) {
+              credibilityResult.averageScore = parsedData.averageScore;
+            }
+          } catch (error) {
+            console.error('Error parsing credibility raw output:', error);
+          }
+        }
+      }
+      
+      // Preserve detailed sentiment reasoning
+      if (results.sentiment_result) {
+        const sentimentResult = results.sentiment_result;
+        
+        // Make sure justification is preserved
+        if (results.sentiment_result.justification) {
+          // Justification is already included in the result
+        }
+        
+        // Check if we have raw sentiment data
+        if (results.sentiment_raw_output) {
+          try {
+            // Extract and parse the raw output
+            let rawOutput = results.sentiment_raw_output;
+            
+            // Handle cases where the response is wrapped in code fence
+            if (rawOutput.startsWith("```") && rawOutput.endsWith("```")) {
+              rawOutput = rawOutput.substring(3, rawOutput.length - 3).trim();
+            }
+            
+            // If it starts with "json", remove that
+            if (rawOutput.toLowerCase().startsWith("json")) {
+              rawOutput = rawOutput.substring(4).trim();
+            }
+            
+            // Parse the JSON
+            const parsedData = JSON.parse(rawOutput);
+            
+            // Add detailed data if available
+            if (parsedData.justification) {
+              if (Array.isArray(parsedData.justification)) {
+                sentimentResult.justification = parsedData.justification.join(". ");
+              } else {
+                sentimentResult.justification = parsedData.justification;
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing sentiment raw output:', error);
+          }
+        }
+      }
+      
       // Add the new results
       processedArticles[url] = {
         results: results,

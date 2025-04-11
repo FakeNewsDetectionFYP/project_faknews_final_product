@@ -50,6 +50,7 @@ const Popup: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('summary');
+  const [currentUrl, setCurrentUrl] = useState<string>('');
 
   // Function to manually trigger processing
   const triggerProcessing = async () => {
@@ -64,6 +65,7 @@ const Popup: React.FC = () => {
       }
       
       const url = tabs[0].url;
+      setCurrentUrl(url);
       const title = tabs[0].title || '';
       
       console.log('Triggering manual processing for:', url);
@@ -130,6 +132,13 @@ const Popup: React.FC = () => {
         console.error('Backend server connection failed:', error);
         setError('Backend server not running. Please start your backend server.');
       });
+    
+    // Get the current URL
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs[0] && tabs[0].url) {
+        setCurrentUrl(tabs[0].url);
+      }
+    });
     
     fetchResults();
   }, []);
@@ -322,6 +331,25 @@ const Popup: React.FC = () => {
     );
   };
 
+  // Open the detailed report page
+  const openDetailedReport = () => {
+    if (!currentUrl) {
+      setError('Cannot open detailed report: URL not available');
+      return;
+    }
+    
+    // If we have results, use the article_url if available as it might be the canonical URL
+    // that was actually used for the analysis instead of the browser URL
+    const urlToUse = results?.article_url || currentUrl;
+    
+    console.log('Opening detailed report for URL:', urlToUse);
+    
+    // Open the report page in a new tab
+    chrome.tabs.create({
+      url: chrome.runtime.getURL(`report.html?url=${encodeURIComponent(urlToUse)}`)
+    });
+  };
+
   if (loading) {
     return <div className="loading">Loading analysis results...</div>;
   }
@@ -411,6 +439,18 @@ const Popup: React.FC = () => {
           Sentiment
         </button>
       </div>
+
+      {/* Detailed Report Button */}
+      {results && !loading && !error && (
+        <div className="detailed-report-button-container">
+          <button 
+            className="detailed-report-button"
+            onClick={openDetailedReport}
+          >
+            View Detailed Report
+          </button>
+        </div>
+      )}
 
       <div className="tab-content">
         {activeTab === 'summary' && (

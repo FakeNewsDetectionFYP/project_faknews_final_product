@@ -222,63 +222,15 @@ async def create_workflow() -> Any:
     """
     Create the LangGraph workflow.
     
-    This function creates and configures the LangGraph workflow 
-    by setting up nodes and connections between agents.
+    This function has been modified to return None, as we're using the 
+    sequential processing fallback instead of LangGraph.
     """
-    try:
-        # Try to import langgraph - this may fail if there are dependency conflicts
-        try:
-            import langgraph.graph as lg
-        except ImportError as e:
-            logger.warning(f"LangGraph import failed: {str(e)}")
-            logger.warning("This is likely due to a dependency conflict between langgraph and langchain.")
-            logger.warning("Consider updating your requirements.txt file with compatible versions.")
-            return None
-        
-        # Initialize agents
-        head_node = HeadNode()
-        fake_news_agent = FakeNewsAgent()
-        credibility_agent = CredibilityAgent()
-        sentiment_agent = SentimentAgent()
-        summary_agent = SummaryAgent()
-        validator = ValidatorAgent()
-        
-        # Import routers
-        from .routers import router, validation_router
-        
-        # Build the workflow graph
-        builder = lg.StateGraph(AnalysisState)
-        
-        # Add nodes
-        builder.add_node("head", head_node)
-        builder.add_node("fake_news", fake_news_agent)
-        builder.add_node("credibility", credibility_agent)
-        builder.add_node("sentiment", sentiment_agent)
-        builder.add_node("summary", summary_agent)
-        builder.add_node("validator", validator)
-        
-        # Add edges
-        builder.add_edge("head", router)
-        builder.add_edge("fake_news", "validator")
-        builder.add_edge("credibility", "validator")
-        builder.add_edge("sentiment", "validator")
-        builder.add_edge("summary", "validator")
-        builder.add_edge("validator", validation_router)
-        
-        # Set the entry point
-        builder.set_entry_point("head")
-        
-        # Compile the graph
-        graph = builder.compile()
-        return graph
-    except Exception as e:
-        logger.warning(f"Error creating LangGraph workflow: {str(e)}")
-        logger.warning("Using mocked workflow instead")
-        return None
+    logger.warning("LangGraph is not being used; using sequential processing instead")
+    return None
 
 async def process_article(url: str, title: Optional[str] = None, source: Optional[str] = None) -> Dict[str, Any]:
     """
-    Process a news article with our LangGraph workflow.
+    Process a news article with sequential processing of each agent.
     
     This is the main entry point for the backend processing.
     """
@@ -304,40 +256,53 @@ async def process_article(url: str, title: Optional[str] = None, source: Optiona
             "agent_invocation_counts": {}
         }
         
-        # Try to use LangGraph if available
-        workflow = await create_workflow()
+        # Sequential processing - this is now the only path
+        logger.info("Using sequential processing")
+        head_node = HeadNode()
+        fake_news_agent = FakeNewsAgent()
+        credibility_agent = CredibilityAgent()
+        sentiment_agent = SentimentAgent()
+        summary_agent = SummaryAgent()
         
-        if workflow:
-            # Run the LangGraph workflow
-            logger.info("Running LangGraph workflow")
-            result = await workflow.ainvoke(state)
-            return result
-        else:
-            # Fallback to sequential processing if LangGraph not available
-            logger.info("Using sequential processing fallback")
-            head_node = HeadNode()
-            fake_news_agent = FakeNewsAgent()
-            credibility_agent = CredibilityAgent()
-            sentiment_agent = SentimentAgent()
-            summary_agent = SummaryAgent()
-            
-            # Run head node to decide which agents to call
-            state = await head_node(state)
-            
-            # Run each agent in sequence
-            if state.get("call_fake_news", False):
+        # Run head node to decide which agents to call
+        state = await head_node(state)
+        
+        # Run fake news agent if needed
+        if state.get("call_fake_news", True):  # Default to True for complete analysis
+            logger.info("Running fake news agent")
+            try:
                 state = await fake_news_agent(state)
-            
-            if state.get("call_credibility", False):
+            except Exception as e:
+                logger.error(f"Error in fake news agent: {str(e)}")
+                state["fake_news_error"] = str(e)
+        
+        # Run credibility agent if needed
+        if state.get("call_credibility", True):  # Default to True
+            logger.info("Running credibility agent")
+            try:
                 state = await credibility_agent(state)
-            
-            if state.get("call_sentiment", False):
+            except Exception as e:
+                logger.error(f"Error in credibility agent: {str(e)}")
+                state["credibility_error"] = str(e)
+        
+        # Run sentiment agent if needed
+        if state.get("call_sentiment", True):  # Default to True
+            logger.info("Running sentiment agent")
+            try:
                 state = await sentiment_agent(state)
-            
-            # Always run summary agent
+            except Exception as e:
+                logger.error(f"Error in sentiment agent: {str(e)}")
+                state["sentiment_error"] = str(e)
+        
+        # Always run summary agent
+        logger.info("Running summary agent")
+        try:
             state = await summary_agent(state)
-            
-            return state
+        except Exception as e:
+            logger.error(f"Error in summary agent: {str(e)}")
+            state["summary_error"] = str(e)
+        
+        return state
     
     except Exception as e:
         logger.error(f"Error processing article: {str(e)}")

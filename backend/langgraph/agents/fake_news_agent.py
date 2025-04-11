@@ -5,6 +5,9 @@ FakeNewsAgent - Analyzes an article for potentially false claims
 import asyncio
 import logging
 import os
+import json
+import re
+import aiohttp
 from typing import Dict, Any, List
 
 # Set up logging
@@ -39,9 +42,6 @@ class FakeNewsAgent:
         # Import the necessary libraries for real implementation
         try:
             from openai import AsyncOpenAI
-            import aiohttp
-            from bs4 import BeautifulSoup
-            import json
         except ImportError as e:
             logger.error(f"Failed to import required libraries: {e}")
             return await self._mock_implementation(state)
@@ -65,33 +65,38 @@ class FakeNewsAgent:
         # 1. Extract claims from the article
         logger.info("Extracting claims from article")
         try:
-            claims_prompt = f"""
-            Extract exactly 5 factual claims from this article. Return only a JSON array of claim strings.
-            
+            extract_prompt = f"""
+            You are an assistant that extracts exactly 2 factual claims from this article.
+            Return them as a valid JSON array of 2 strings (no commentary, code fences, or backticks).
+
             Article Title: {article_title}
-            Article Content: {article_content}
+            Article Text: {article_content}
             """
             
             response = await client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are a factual claim extractor. Extract exactly 5 factual claims from the provided article."},
-                    {"role": "user", "content": claims_prompt}
+                    {"role": "system", "content": extract_prompt},
+                    {"role": "user", "content": "List 2 claims in a JSON array now."}
                 ],
                 temperature=0.3
             )
             
-            claims_text = response.choices[0].message.content.strip()
+            raw_claims = response.choices[0].message.content.strip()
             # Clean up potential code fences
-            if claims_text.startswith("```") and claims_text.endswith("```"):
-                claims_text = claims_text[3:-3]
-            if claims_text.startswith("json"):
-                claims_text = claims_text[4:]
+            raw_claims = self._remove_code_fences(raw_claims)
+            logger.info(f"Raw claims extraction output: {raw_claims}")
                 
-            claims = json.loads(claims_text)
-            if not isinstance(claims, list):
+            try:
+                claims = json.loads(raw_claims)
+                if not isinstance(claims, list):
+                    raise ValueError("Parsed JSON is not a valid list.")
+            except Exception as e:
+                logger.error(f"JSON parse error on extracted claims: {e}")
                 claims = []
                 
+            claims = claims[:10]  # Ensure we have at most 10 claims
+            
         except Exception as e:
             logger.error(f"Error extracting claims with OpenAI: {e}")
             claims = []
@@ -99,22 +104,50 @@ class FakeNewsAgent:
         if not claims:
             logger.warning("No claims extracted, falling back to mock data")
             return await self._mock_implementation(state)
+
+        # 2. Analyze each claim using search and verification
+        search_api_key = os.environ.get("SEARCH_API_KEY")
+        if not search_api_key:
+            logger.warning("No Search API key found, using simplified claim verification")
+            all_claims = await self._analyze_claims_simplified(claims, client)
+        else:
+            # Setup search tool
+            try:
+                # Replace SearchApiAPIWrapper with custom Google Search implementation
+                search_engine_cx = os.environ.get("SEARCH_ENGINE_CX")
+                if not search_engine_cx:
+                    logger.warning("No Search Engine CX found, using simplified claim verification")
+                    all_claims = await self._analyze_claims_simplified(claims, client)
+                else:
+                    all_claims = await self._analyze_claims_with_google_search(claims, client, search_api_key, search_engine_cx)
+            except Exception as e:
+                logger.error(f"Error setting up search: {e}")
+                all_claims = await self._analyze_claims_simplified(claims, client)
             
-        # 2. Analyze each claim
-        all_claims = []
-        for claim in claims[:5]:  # Limit to 5 claims
-            claim_result = await self._analyze_claim(claim, client)
-            all_claims.append(claim_result)
-            
-        # 3. Calculate results
-        verified_claims = [claim for claim in all_claims if claim["is_verified"]]
-        unverified_claims = [claim for claim in all_claims if not claim["is_verified"]]
+        # 3. Calculate results format matching the original
+        found_count = sum(1 for claim in all_claims if claim.get("found", False))
+        average_score = (found_count / len(claims)) * 100 if claims else 0
+        
+        # Map to the expected format of the original code
+        verified_claims = []
+        unverified_claims = []
+        for claim_data in all_claims:
+            result = {
+                "claim": claim_data["claim"],
+                "is_verified": claim_data.get("found", False),
+                "analysis": claim_data.get("reason", "No analysis provided")
+            }
+            if result["is_verified"]:
+                verified_claims.append(result)
+            else:
+                unverified_claims.append(result)
         
         # Return fake news detection results with detailed claim analysis
+        # Format in original JSON structure
         state["fake_news_result"] = {
             "claims_analyzed": len(all_claims),
             "claims_verified": len(verified_claims),
-            "verification_score": len(verified_claims) / len(all_claims) if all_claims else 0,
+            "verification_score": average_score / 100,  # Convert to 0-1 range
             "verified_claims": verified_claims,
             "unverified_claims": unverified_claims,
             "all_claims": all_claims
@@ -131,7 +164,182 @@ class FakeNewsAgent:
         state["agent_invocation_counts"]["fake_news"] = state["agent_invocation_counts"].get("fake_news", 0) + 1
         
         return state
+
+    async def _analyze_claims_with_google_search(self, claims, client, api_key, cx):
+        """Analyze claims with Google Custom Search"""
+        all_claims = []
         
+        # Import the search API
+        try:
+            from utils.search_api import SearchAPI
+            search_api = SearchAPI(api_key=api_key, cx=cx)
+        except ImportError as e:
+            logger.error(f"Error importing SearchAPI: {e}")
+            return await self._analyze_claims_simplified(claims, client)
+            
+        for claim in claims:
+            logger.info(f"Analyzing claim: {claim}")
+            try:
+                # Use the SearchAPI to get results
+                search_results = await search_api.search(claim, num_results=3)
+                external_text = ""
+                
+                if search_results:
+                    links_fetched = 0
+                    for item in search_results:
+                        link_url = item.get('link')
+                        if link_url and link_url.startswith("http"):
+                            logger.info(f"Fetching content from: {link_url}")
+                            try:
+                                async with aiohttp.ClientSession() as session:
+                                    async with session.get(link_url, timeout=10) as link_resp:
+                                        if link_resp.status == 200:
+                                            html_content = await link_resp.text()
+                                            page_text = self._extract_text_from_html(html_content, link_url)
+                                            if page_text:
+                                                external_text += f"\n\n[SOURCE: {link_url}]\n{page_text}"
+                                                links_fetched += 1
+                                                # Get only one link per claim
+                                                if links_fetched >= 1:
+                                                    break
+                            except Exception as e:
+                                logger.error(f"Error fetching link: {e}")
+                
+                # If we couldn't fetch any content, add some basic info from search results
+                if not external_text and search_results:
+                    for item in search_results:
+                        snippet = item.get('snippet', '')
+                        title = item.get('title', '')
+                        if snippet:
+                            external_text += f"\n\n[SOURCE: {item.get('link', 'Unknown')}]\n{title}: {snippet}"
+                
+                # Verify the claim against external text
+                if external_text:
+                    verification = await self._check_claim_with_gpt(claim, external_text, client)
+                    all_claims.append(verification)
+                else:
+                    all_claims.append({
+                        "claim": claim,
+                        "found": False,
+                        "reason": "No relevant search results found to verify this claim",
+                        "score": 0
+                    })
+                
+            except Exception as e:
+                logger.error(f"Error analyzing claim with search: {e}")
+                all_claims.append({
+                    "claim": claim,
+                    "found": False,
+                    "reason": f"Error during verification: {str(e)}",
+                    "score": 0
+                })
+                
+        return all_claims
+        
+    async def _analyze_claims_simplified(self, claims, client):
+        """Simplified claim analysis without web search"""
+        all_claims = []
+        for claim in claims:
+            result = await self._analyze_claim(claim, client)
+            all_claims.append({
+                "claim": claim,
+                "found": result.get("is_verified", False),
+                "reason": result.get("analysis", "No analysis provided"),
+                "score": 100 if result.get("is_verified", False) else 0
+            })
+        return all_claims
+    
+    async def _check_claim_with_gpt(self, claim, external_text, client):
+        """
+        Checks if the external_text supports the given claim. Returns claim verification data.
+        """
+        system_prompt = f"""
+You are a fact-checking assistant. You have:
+1) A claim: {claim}
+2) External text from search results:
+
+{external_text}
+
+Does this text SUPPORT the claim or NOT?
+Return ONLY JSON:
+{{
+  "supports": true/false,
+  "reason": "short explanation"
+}}
+No extra text, no code fences.
+"""
+
+        try:
+            response = await client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": "Return your JSON verdict."}
+                ],
+                temperature=0.3
+            )
+            
+            raw_response = response.choices[0].message.content.strip()
+            # Clean up potential code fences
+            raw_response = self._remove_code_fences(raw_response)
+            logger.info(f"Raw response: {raw_response}")
+            
+            try:
+                # Parse the response - ensure json is imported
+                result = json.loads(raw_response)
+                supports = result.get("supports", False)
+                reason = result.get("reason", "No reason provided")
+                
+                return {
+                    "claim": claim,
+                    "found": supports,
+                    "reason": reason,
+                    "score": 100 if supports else 0
+                }
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON from GPT response: {e}")
+                logger.error(f"Raw response was: {raw_response}")
+                # Fallback result
+                return {
+                    "claim": claim,
+                    "found": False,
+                    "reason": f"Error parsing response: {raw_response}",
+                    "score": 0
+                }
+                
+        except Exception as e:
+            logger.error(f"Error in claim verification with GPT: {e}")
+            return {
+                "claim": claim,
+                "found": False,
+                "reason": f"Error during verification: {str(e)}",
+                "score": 0
+            }
+            
+    def _extract_text_from_html(self, html_str, link_url):
+        """
+        Uses BeautifulSoup to parse <p> content from HTML and returns extracted text.
+        """
+        try:
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(html_str, "html.parser")
+            paragraphs = soup.find_all("p")
+            text_content = "\n".join(p.get_text() for p in paragraphs if p.get_text())
+            logger.info(f"Extracted text length: {len(text_content)} from {link_url}")
+            return text_content
+        except Exception as e:
+            logger.error(f"Error extracting text from HTML: {e}")
+            return ""
+            
+    def _remove_code_fences(self, text):
+        """
+        Removes Markdown code fences (e.g., ```json) from GPT output.
+        """
+        t = text.strip()
+        t = re.sub(r"^```[a-zA-Z]*", "", t)
+        t = re.sub(r"```$", "", t)
+        return t.strip()
+
     async def _analyze_claim(self, claim: str, client) -> Dict[str, Any]:
         """Analyze a single claim using OpenAI"""
         try:
