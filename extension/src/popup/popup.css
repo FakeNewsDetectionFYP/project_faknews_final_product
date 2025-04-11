@@ -1,0 +1,298 @@
+/* Base styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.popup-container {
+  width: 400px;
+  min-height: 300px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styles */
+header {
+  background-color: #2e7d32;
+  color: white;
+  padding: 12px 16px;
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dev-tools-link {
+  color: white;
+  font-size: 12px;
+  text-decoration: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.dev-tools-link:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.article-info {
+  margin-top: 8px;
+}
+
+.article-info h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-badge {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Tab navigation */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.tabs button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tabs button.active {
+  color: #2e7d32;
+  border-bottom: 2px solid #2e7d32;
+  background-color: white;
+}
+
+.tabs button:hover {
+  background-color: rgba(46, 125, 50, 0.05);
+}
+
+/* Tab content */
+.tab-content {
+  padding: 16px;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.tone-badge, .bias-badge {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #e0e0e0;
+}
+
+.evaluation, .justification {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.claims-summary {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.unverified-claims {
+  margin-top: 16px;
+}
+
+.unverified-claims h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #F44336;
+}
+
+.unverified-claims ul {
+  margin: 0;
+  padding: 0 0 0 16px;
+  font-size: 13px;
+}
+
+.unverified-claims li {
+  margin-bottom: 4px;
+}
+
+/* Loading and error states */
+.loading, .error {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.error h3 {
+  color: #F44336;
+  margin: 0 0 16px 0;
+}
+
+.error p {
+  margin: 8px 0;
+}
+
+.error ul {
+  text-align: left;
+  display: inline-block;
+  margin: 8px 0;
+  padding-left: 16px;
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Retry button */
+.retry-button {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+  background-color: #388e3c;
+}
+
+/* Test button */
+.test-button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.test-button:hover {
+  background-color: #1565c0;
+}
+
+/* Disabled button styles */
+.retry-button:disabled,
+.test-button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+/* Claims analysis styling */
+.all-claims {
+  margin-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+}
+
+.all-claims h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.claims-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.claim-item {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.claim-item.verified {
+  border-left-color: #4CAF50;
+}
+
+.claim-item.unverified {
+  border-left-color: #F44336;
+}
+
+.claim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.claim-text {
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+  padding-right: 8px;
+}
+
+.claim-status {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.claim-status.verified {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.claim-status.unverified {
+  background-color: #F44336;
+  color: white;
+}
+
+.claim-analysis {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+} 

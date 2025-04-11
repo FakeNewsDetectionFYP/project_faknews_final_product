@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Analyzer Options</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+    .option-group {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+    }
+    .option-group h2 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    input[type="text"], 
+    input[type="url"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #1b5e20;
+    }
+    .saved-message {
+      color: green;
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>News Analyzer Options</h1>
+  
+  <div class="option-group">
+    <h2>API Configuration</h2>
+    <label for="api-url">
+      Backend API URL:
+      <input type="url" id="api-url" placeholder="http://localhost:8000">
+    </label>
+    <p>By default, the extension uses the local development server at localhost:8000.</p>
+  </div>
+
+  <div class="option-group">
+    <h2>News Sites</h2>
+    <p>The extension automatically processes pages from recognized news sites. You can add custom domains below:</p>
+    <label for="custom-sites">
+      Custom News Domains (one per line):
+      <textarea id="custom-sites" rows="5" style="width: 100%;" placeholder="example.com"></textarea>
+    </label>
+  </div>
+
+  <div class="option-group">
+    <h2>Settings</h2>
+    <label>
+      <input type="checkbox" id="auto-process"> 
+      Automatically process news articles when page loads
+    </label>
+    <label>
+      <input type="checkbox" id="show-notifications"> 
+      Show notification when analysis is complete
+    </label>
+  </div>
+
+  <div class="option-group">
+    <h2>Data Management</h2>
+    <button id="clear-cache">Clear Cached Analysis Results</button>
+    <span id="cache-cleared" class="saved-message">Cache cleared!</span>
+  </div>
+
+  <div>
+    <button id="save-options">Save Options</button>
+    <span id="saved-message" class="saved-message">Options saved!</span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html> 

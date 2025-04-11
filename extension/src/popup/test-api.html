@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Test Tools</title>
+  <style>
+    body {
+      width: 400px;
+      padding: 15px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    
+    .test-section {
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+    
+    h2 {
+      color: #3498db;
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    pre {
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow: auto;
+      max-height: 200px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      font-size: 12px;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .input-group input[type="text"] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .success {
+      color: #27ae60;
+    }
+
+    .error {
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>API Test Tools</h1>
+  
+  <div class="test-section">
+    <h2>URL Extraction</h2>
+    <button id="extract-url">Extract URL from Current Page</button>
+    <pre id="url-result">Results will appear here...</pre>
+  </div>
+  
+  <div class="test-section">
+    <h2>API Communication</h2>
+    <div class="input-group">
+      <label for="custom-url">Custom URL to test:</label>
+      <input type="text" id="custom-url" placeholder="Enter URL or use extracted URL">
+    </div>
+    <button id="test-api">Test API with URL</button>
+    <button id="test-api-all">Test All API Endpoints</button>
+    <pre id="api-result">Results will appear here...</pre>
+  </div>
+  
+  <div class="test-section">
+    <h2>Cached Results</h2>
+    <button id="show-cache">Show Cached Results</button>
+    <button id="clear-cache">Clear Cache</button>
+    <pre id="cache-result">Results will appear here...</pre>
+  </div>
+
+  <script src="test-api.js"></script>
+</body>
+</html> 
