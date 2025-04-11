@@ -36,12 +36,15 @@ This project is a **browser extension** that collects the **URL of the currently
    pip install -r requirements.txt
    ```
 
-4. Run the backend service:
+4. Configure API settings (see [API Configuration](#api-configuration) below)
+
+5. Run the backend service:
    ```bash
-   uvicorn main:app --reload
+   ./run_dev.sh
    ```
 
-5. The API will be available at `http://localhost:8000`
+6. The API will be available at `http://localhost:8000`
+   API docs will be available at `http://localhost:8000/docs`
 
 ### Using Docker
 
@@ -78,20 +81,63 @@ docker run -p 8000:8000 -v $(pwd)/data:/data news-processor-api
 
 ---
 
-## 💡 Development
+## 💡 Development and Testing
 
-### Mock APIs
+### API Configuration
 
-During development, mock APIs are used by default. This allows for testing without real API keys.
+The system can operate in two modes:
 
-To use real APIs:
-1. Create a `.env` file in the backend directory
-2. Add your API keys:
+#### 1. Mock API Mode (for development/testing)
+
+This mode uses pre-defined mock data and doesn't require API keys:
+
+1. Create or edit `.env` file in the backend directory:
+   ```
+   USE_MOCK_APIS=true
+   DB_FILE=articles_db.json
+   ```
+
+2. Run the backend with mock APIs:
+   ```bash
+   cd backend
+   ./run_dev.sh
+   ```
+
+3. The terminal will confirm: `🔄 Using MOCK APIs for development`
+
+#### 2. Real API Mode (for production use)
+
+This mode uses actual OpenAI and Google Search APIs to analyze articles:
+
+1. Create or edit `.env` file in the backend directory with your API keys:
    ```
    USE_MOCK_APIS=false
-   OPENAI_API_KEY=your_openai_key
-   SEARCH_API_KEY=your_search_api_key
+   OPENAI_API_KEY=your_openai_api_key
+   SEARCH_API_KEY=your_google_search_api_key
+   SEARCH_ENGINE_CX=your_search_engine_cx
+   DB_FILE=articles_db.json
    ```
+
+2. Run the backend with real APIs:
+   ```bash
+   cd backend
+   ./run_dev.sh
+   ```
+
+3. The terminal will confirm: `🔄 Using REAL APIs`
+
+**Important**: When using real APIs, ensure your `.env` file is properly formatted with no line breaks in the API keys, and that all the required keys have valid values.
+
+### Testing the Extension
+
+The extension includes a dedicated test page to verify API connectivity:
+
+1. With the backend running, open the extension popup
+2. Click on the "API Test Tools" link in the popup header
+3. Use the test buttons to verify:
+   - URL extraction
+   - Backend connectivity
+   - API response handling
 
 ### Backend Architecture
 
@@ -129,6 +175,27 @@ Run extension tests:
 cd extension
 npm test
 ```
+
+### Manual Testing Flow
+
+1. Start the backend server with `./run_dev.sh`
+2. Load the extension in Chrome
+3. Navigate to a news article
+4. Click the extension icon
+5. Verify that the article is processed and results are displayed
+6. Check the "Fact Check" tab to confirm claims are extracted from the current article (not mock data)
+
+### Troubleshooting
+
+- If the fact-check claims show astronomy-themed examples, you're seeing mock data. Check that:
+  - `USE_MOCK_APIS=false` is set in `.env`
+  - Your API keys are valid and properly formatted
+  - The backend server was restarted after configuration changes
+
+- If no API calls are being made when opening the popup:
+  - Check browser console for errors
+  - Verify the backend server is running (http://localhost:8000)
+  - Try the API Test Tools to debug communications
 
 ---
 
