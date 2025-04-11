@@ -78,6 +78,14 @@ async def list_articles():
     """List all processed articles"""
     return get_articles()
 
+@app.get("/get_article")
+async def get_article_by_url_param(url: str):
+    """Get article data by URL parameter"""
+    article = get_article_by_url(url)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return {"article": article}
+
 # Background task for processing articles
 async def process_article_task(article: ArticleRequest, article_id: str):
     """Background task to process an article with LangGraph"""

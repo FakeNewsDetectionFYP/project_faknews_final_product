@@ -33,8 +33,11 @@
   "options_page": "options.html",
   "web_accessible_resources": [
     {
-      "resources": ["report.html", "report.css", "report.js"],
+      "resources": ["report.html", "report.css", "report.js", "chart.js"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 } 

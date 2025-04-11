@@ -287,7 +287,7 @@ const Popup: React.FC = () => {
     if (!fakeNewsResult) return null;
     
     // First, prepare the claims array
-    let allClaims: Array<{claim: string; analysis: string; is_verified: boolean}> = [];
+    let allClaims: Array<{claim: string; analysis?: string; reason?: string; is_verified?: boolean; found?: boolean}> = [];
     
     if (fakeNewsResult.all_claims) {
       // Use all_claims if available
@@ -313,19 +313,32 @@ const Popup: React.FC = () => {
       <div className="all-claims">
         <h4>Analyzed Claims:</h4>
         <div className="claims-list">
-          {allClaims.map((claim, i) => (
-            <div key={i} className={`claim-item ${claim.is_verified ? 'verified' : 'unverified'}`}>
-              <div className="claim-header">
-                <span className="claim-text">{claim.claim}</span>
-                <span className={`claim-status ${claim.is_verified ? 'verified' : 'unverified'}`}>
-                  {claim.is_verified ? 'Verified' : 'Unverified'}
-                </span>
+          {allClaims.map((claim, i) => {
+            // Determine if the claim is verified - check both is_verified and found properties
+            const isVerified = claim.is_verified !== undefined 
+              ? claim.is_verified 
+              : claim.found === true;
+            
+            // Get analysis text - check both analysis and reason properties
+            const analysisText = claim.analysis || claim.reason || 
+              (isVerified 
+                ? 'This claim is supported by the article content.' 
+                : 'This claim is not supported by the article content.');
+            
+            return (
+              <div key={i} className={`claim-item ${isVerified ? 'verified' : 'unverified'}`}>
+                <div className="claim-header">
+                  <span className="claim-text">{claim.claim}</span>
+                  <span className={`claim-status ${isVerified ? 'verified' : 'unverified'}`}>
+                    {isVerified ? 'Verified' : 'Unverified'}
+                  </span>
+                </div>
+                <div className="claim-analysis">
+                  {analysisText}
+                </div>
               </div>
-              <div className="claim-analysis">
-                {claim.analysis}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
