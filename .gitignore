@@ -50,6 +50,10 @@ ENV/
 .env
 .env.dev
 .env.prod
+# Environment Variables
+.env
+backend/.env
+*/**/.env
 
 # Project specific
 articles_db.json
