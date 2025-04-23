@@ -382,22 +382,36 @@ const Popup: React.FC = () => {
   // Settings UI Component
   const SettingsPanel = () => {
     return (
-      <div className="settings-panel">
-        <h3>Settings</h3>
-        <div className="setting-item">
-          <label htmlFor="numClaims">Number of Claims to Check:</label>
-          <select 
-            id="numClaims" 
-            value={numClaims} 
-            onChange={(e) => saveNumClaims(Number(e.target.value))}
-          >
-            {[1, 2, 3, 4, 5].map(num => (
-              <option key={num} value={num}>{num}</option>
-            ))}
-          </select>
+      <div className="settings-container">
+        <div className="popup-header">
+          <h1>Settings</h1>
+          <div className="header-actions">
+            <button 
+              className="settings-button" 
+              onClick={() => setShowSettings(false)} 
+              title="Close Settings"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-        <div className="settings-actions">
-          <button onClick={() => setShowSettings(false)}>Close</button>
+        
+        <div className="settings-panel">
+          <div className="setting-item">
+            <label htmlFor="numClaims">Number of Claims to Check:</label>
+            <select 
+              id="numClaims" 
+              value={numClaims} 
+              onChange={(e) => saveNumClaims(Number(e.target.value))}
+            >
+              {[1, 2, 3, 4, 5].map(num => (
+                <option key={num} value={num}>{num}</option>
+              ))}
+            </select>
+          </div>
+          <div className="settings-actions">
+            <button onClick={() => setShowSettings(false)}>Save</button>
+          </div>
         </div>
       </div>
     );
@@ -423,6 +437,16 @@ const Popup: React.FC = () => {
           <p className="url">{currentUrl}</p>
         </div>
         
+        <div className="analyzer-info">
+          <h4>What this analyzer does:</h4>
+          <ul>
+            <li>Verifies factual claims in the article</li>
+            <li>Assesses the credibility of the content</li>
+            <li>Analyzes sentiment and potential bias</li>
+            <li>Provides a comprehensive summary</li>
+          </ul>
+        </div>
+        
         <div className="analyze-options">
           <label htmlFor="numClaimsSelect">Number of claims to check:</label>
           <select 
@@ -431,9 +455,10 @@ const Popup: React.FC = () => {
             onChange={(e) => saveNumClaims(Number(e.target.value))}
           >
             {[1, 2, 3, 4, 5].map(num => (
-              <option key={num} value={num}>{num}</option>
+              <option key={num} value={num}>{num} claim{num !== 1 ? 's' : ''}</option>
             ))}
           </select>
+          <p className="select-hint">More claims = more thorough analysis but takes longer</p>
         </div>
         
         <button 
@@ -488,39 +513,39 @@ const Popup: React.FC = () => {
 
   return (
     <div className="popup-container">
-      <div className="popup-header">
-        <h1>News Analyzer</h1>
-        <div className="header-actions">
-          <button 
-            className="refresh-button" 
-            onClick={fetchResults} 
-            title="Refresh Results"
-            disabled={processing}
-          >
-            🔄
-          </button>
-          <button 
-            className="reanalyze-button"
-            onClick={triggerProcessing}
-            disabled={processing}
-            title="Run analysis again"
-          >
-            Reanalyze
-          </button>
-          <button 
-            className="settings-button" 
-            onClick={() => setShowSettings(!showSettings)} 
-            title="Settings"
-          >
-            ⚙️
-          </button>
-        </div>
-      </div>
-
       {showSettings ? (
         <SettingsPanel />
       ) : (
         <>
+          <div className="popup-header">
+            <h1>News Analyzer</h1>
+            <div className="header-actions">
+              <button 
+                className="refresh-button" 
+                onClick={fetchResults} 
+                title="Refresh Results"
+                disabled={processing}
+              >
+                🔄
+              </button>
+              <button 
+                className="reanalyze-button"
+                onClick={triggerProcessing}
+                disabled={processing}
+                title="Run analysis again"
+              >
+                Reanalyze
+              </button>
+              <button 
+                className="settings-button" 
+                onClick={() => setShowSettings(!showSettings)} 
+                title="Settings"
+              >
+                ⚙️
+              </button>
+            </div>
+          </div>
+
           {processing && (
             <div className="processing-indicator">
               <div className="spinner"></div>
