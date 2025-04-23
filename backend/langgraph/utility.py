@@ -228,13 +228,19 @@ async def create_workflow() -> Any:
     logger.warning("LangGraph is not being used; using sequential processing instead")
     return None
 
-async def process_article(url: str, title: Optional[str] = None, source: Optional[str] = None) -> Dict[str, Any]:
+async def process_article(url: str, title: Optional[str] = None, source: Optional[str] = None, num_claims: int = 2) -> Dict[str, Any]:
     """
     Process a news article with sequential processing of each agent.
     
     This is the main entry point for the backend processing.
+    
+    Args:
+        url: The URL of the article to process
+        title: Optional title of the article
+        source: Optional source name of the article
+        num_claims: Number of claims to extract and analyze (default: 2)
     """
-    logger.info(f"Processing article from URL: {url}")
+    logger.info(f"Processing article from URL: {url} with {num_claims} claims")
     
     try:
         # Fetch article content
@@ -253,7 +259,8 @@ async def process_article(url: str, title: Optional[str] = None, source: Optiona
             "article_url": url,
             "article_source": article_data.get("source"),
             "agents_called": [],
-            "agent_invocation_counts": {}
+            "agent_invocation_counts": {},
+            "num_claims": num_claims  # Add the number of claims to the state
         }
         
         # Sequential processing - this is now the only path

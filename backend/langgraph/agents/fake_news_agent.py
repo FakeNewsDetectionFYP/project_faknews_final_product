@@ -50,6 +50,10 @@ class FakeNewsAgent:
         article_content = state.get("article_content", "")
         article_title = state.get("article_title", "Untitled Article")
         
+        # Get the number of claims to extract from state
+        num_claims = state.get("num_claims", 2)
+        logger.info(f"Extracting {num_claims} claims from article")
+        
         if not article_content:
             logger.warning("No article content provided")
             return state
@@ -66,8 +70,8 @@ class FakeNewsAgent:
         logger.info("Extracting claims from article")
         try:
             extract_prompt = f"""
-            You are an assistant that extracts exactly 2 factual claims from this article.
-            Return them as a valid JSON array of 2 strings (no commentary, code fences, or backticks).
+            You are an assistant that extracts exactly {num_claims} factual claims from this article.
+            Return them as a valid JSON array of {num_claims} strings (no commentary, code fences, or backticks).
 
             Article Title: {article_title}
             Article Text: {article_content}
@@ -77,7 +81,7 @@ class FakeNewsAgent:
                 model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": extract_prompt},
-                    {"role": "user", "content": "List 2 claims in a JSON array now."}
+                    {"role": "user", "content": f"List {num_claims} claims in a JSON array now."}
                 ],
                 temperature=0.3
             )
@@ -395,6 +399,10 @@ No extra text, no code fences.
         """Mock implementation for development purposes"""
         logger.info("Using mock data for FakeNewsAgent")
         
+        # Get the number of claims to extract
+        num_claims = state.get("num_claims", 2)
+        logger.info(f"Mock implementation using {num_claims} claims")
+        
         # Simulate processing time
         await asyncio.sleep(1)
         
@@ -426,6 +434,9 @@ No extra text, no code fences.
                 "is_verified": False
             }
         ]
+        
+        # Limit to the requested number of claims
+        all_claims = all_claims[:num_claims]
         
         # Extract verified and unverified claims
         verified_claims = [claim for claim in all_claims if claim["is_verified"]]

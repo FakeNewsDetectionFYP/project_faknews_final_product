@@ -27,6 +27,7 @@ class ArticleRequest(BaseModel):
     url: str
     title: Optional[str] = None
     source: Optional[str] = None
+    num_claims: Optional[int] = 2  # Default is 2 claims
 
 class ProcessResponse(BaseModel):
     message: str
@@ -91,7 +92,12 @@ async def process_article_task(article: ArticleRequest, article_id: str):
     """Background task to process an article with LangGraph"""
     try:
         # Process the article with our LangGraph workflow
-        result = await process_article(article.url, article.title, article.source)
+        result = await process_article(
+            article.url, 
+            article.title, 
+            article.source,
+            num_claims=article.num_claims
+        )
         
         # Save the results to our database
         article_data = ArticleCreate(
