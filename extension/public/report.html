@@ -189,335 +189,136 @@
             border-radius: 0 8px 8px 0;
             margin: 20px 0;
         }
+        
+        .loading {
+            text-align: center;
+            padding: 50px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+        }
+        
+        .loading-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Article Analysis Report</h1>
-        
-        <div class="header">
-            <div>
-                <h2 id="article-title">World leaders urge Global South inclusion amid US-China tensions and Gaza conflict</h2>
-                <div class="source-badge" id="source-badge">SCMP</div>
-                <span class="date" id="processed-date">Processed: April 12, 2025</span>
-            </div>
-        </div>
-        
-        <p><a href="" id="article-url" target="_blank">Original Article Link</a></p>
-        
-        <h2>Article Summary</h2>
-        <blockquote id="summary">
-            At the Antalya Diplomacy Forum in Turkey, world leaders emphasized the need for greater inclusion of the Global South in global decision-making amid escalating geopolitical tensions, particularly between the US and China, and ongoing conflicts in Gaza and Ukraine. Indonesian President Prabowo Subianto, UN General Assembly President Philemon Yang, and others highlighted the importance of bilateral and regional diplomacy to address economic rivalries, which they view as more pressing than military challenges. Turkish Vice-President Cevdet Yilmaz urged for a new world order through enhanced communication among nations, stressing that cooperation is essential for maintaining international peace and stability.
-        </blockquote>
-        
-        <h2>Credibility Analysis</h2>
-        <div class="score-container">
-            <div class="score-box">
-                <h3>Source Reputation</h3>
-                <div class="score-value" id="source-reputation">85%</div>
-                <p id="source-reputation-reasoning">The South China Morning Post (SCMP) is a well-known news outlet with a reputation for credible reporting, particularly on Asian affairs. It has a history of journalistic integrity and is recognized internationally.</p>
-            </div>
-            <div class="score-box">
-                <h3>Title-Content Alignment</h3>
-                <div class="score-value" id="title-content">75%</div>
-                <p id="title-content-reasoning">The title accurately reflects the content of the article, which discusses the call for greater inclusion of the Global South amid geopolitical tensions. However, it could be seen as somewhat vague regarding the specific discussions at the Antalya Diplomacy Forum.</p>
-            </div>
-            <div class="score-box">
-                <h3>Overall Credibility</h3>
-                <div class="score-value" id="overall-credibility">80%</div>
-                <p id="overall-conclusion">The article is credible, with a strong reputation from its source, a title that aligns well with its content, and minimal misleading elements. Overall, it provides a reliable account of the events discussed.</p>
-            </div>
-        </div>
-        
-        <h2>Claims Verification</h2>
-        <p id="claims-stats">Claims analyzed: 2, Claims verified: 1, Verification score: 50%</p>
-        
-        <h3>Verified Claims</h3>
-        <div id="verified-claims">
-            <div class="claim verified">
-                <h4>
-                    China raised its tariffs on US products to 125% in response to the US increasing duties on Chinese goods to 145%.
-                    <span class="status-badge verified-badge">Verified</span>
-                </h4>
-                <p>The text confirms that China raised its tariffs on U.S. goods to 125% in response to the U.S. increasing its tariffs to 145%.</p>
-            </div>
-        </div>
-        
-        <h3>Unverified Claims</h3>
-        <div id="unverified-claims">
-            <div class="claim unverified">
-                <h4>
-                    World leaders at Turkey's Antalya Diplomacy Forum urged for greater Global South inclusion and a two-state solution in Gaza.
-                    <span class="status-badge unverified-badge">Unverified</span>
-                </h4>
-                <p>The external text does not mention the Antalya Diplomacy Forum, Global South inclusion, or a two-state solution in Gaza.</p>
-            </div>
-        </div>
-        
-        <h2>Sentiment Analysis</h2>
-        <div class="score-container">
-            <div class="score-box">
-                <h3>Emotional Tone</h3>
-                <div class="score-value" id="emotional-tone">Mixed</div>
-            </div>
-            <div class="score-box">
-                <h3>Subjectivity</h3>
-                <div class="score-value" id="subjectivity">70%</div>
-            </div>
-        </div>
-        
-        <div class="sentiment-container">
-            <h3>Polarity Scale</h3>
-            <div class="sentiment-bar">
-                <div class="sentiment-marker" style="left: 50%;"></div>
-            </div>
-            <div class="sentiment-labels">
-                <span>Negative</span>
-                <span>Neutral</span>
-                <span>Positive</span>
-            </div>
-        </div>
-        
-        <h3>Bias Assessment</h3>
-        <p id="bias-assessment">The article presents a balanced view by acknowledging both the positive call for inclusion and the negative implications of geopolitical tensions.</p>
-        
-        <h3>Key Phrases</h3>
-        <div id="key-phrases">
-            <span class="key-phrase">greater inclusion of the Global South</span>
-            <span class="key-phrase">deepening geopolitical fractures</span>
-            <span class="key-phrase">imperilling peace</span>
-            <span class="key-phrase">critical to have more bilateral diplomacy</span>
-            <span class="key-phrase">economic rivalry is emerging as a more germane problem</span>
-        </div>
-        
-        <h3>Justification</h3>
-        <ul id="sentiment-justification">
-            <li>The article discusses the urgent need for Global South inclusion, which is a positive sentiment.</li>
-            <li>It also highlights rising geopolitical tensions and economic rivalries, indicating a negative aspect.</li>
-            <li>The call for bilateral and regional diplomacy suggests a proactive approach, balancing the negative geopolitical context.</li>
-        </ul>
-        
-        <h2>Article Content</h2>
-        <div class="article-content" id="article-content">
-            Advertisement United Nations This Week in Asia Politics World leaders urge Global South inclusion amid US-China tensions and Gaza conflict World leaders at Turkey's Antalya Diplomacy Forum urged for greater Global South inclusion and a two-state solution in Gaza, amid rising geopolitical tensions Reading Time: 3 minutes Why you can trust SCMP 1 {"@context":"https://schema.org","@type":"ImageObject","url":"https://cdn.i-scmp.com/sites/default/files/styles/1020x680/public/d8/images/canvas/2025/04/11/c7e6cd24-0c50-4cd4-9b80-7e062a0b394b_b8007cc2.jpg?itok=W6msLb7H&amp;v=1744381110"} Biman Mukherji Published: 10:18pm, 11 Apr 2025 Updated: 11:54pm, 11 Apr 2025 World leaders and diplomats at the Antalya Diplomacy Forum in Turkey have called for greater inclusion of the Global South in global decision-making, warning that deepening geopolitical fractures and economic rivalries are weakening international cooperation and imperilling peace. Advertisement Indonesian President Prabowo Subianto, China's special envoy for Middle East affairs Zhai Jun, UN General Assembly President Philemon Yang and several other heads of state spoke at the forum on Friday, held under the theme "Reclaiming Diplomacy in a Fragmented World". The gathering came against the backdrop of escalating geopolitical tensions, including the trade war between the United States and China, as well as the ongoing conflicts in Gaza and Ukraine. {"@context":"https://schema.org","@type":"ImageObject","caption":"Turkish Vice-President Cevdet Yilmaz stresses the importance of bilateral and regional diplomacy. Photo: Handout","url":"https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1024,format=auto/sites/default/files/d8/images/canvas/2025/04/11/084bae82-6d00-4442-a8d5-66e2ca197a40_d4ad561b.jpg"} Turkish Vice-President Cevdet Yilmaz stresses the importance of bilateral and regional diplomacy. Photo: Handout "It is critical to have more bilateral diplomacy and regional diplomacy and prepare the ground for a new world order," Cevdet Yilmaz, Turkey's vice-president told the meeting, noting that economic rivalry is emerging as a more germane problem for the world than military challenges. "This recent tariff war is a very clear point to underline the discussions," he said. China raised its tariffs on US products to 125 per cent, hitting back against US President Donald Trump's decision to hike duties on Chinese goods to 145 per cent in a trade war that threatens to disrupt global supply chains. {"@context":"https://schema.org","@type":"VideoObject","contentUrl":"https://www.youtube.com/embed/_RgxuZVWHNs?wmode=transparent&amp;jqoemcache=UdCOW&amp;enablejsapi=1&amp;playsinline=1","description":"China raises tariffs on US goods to 125% as Xi calls on EU to resist 'unilateral bullying'","duration":"PT2M40S","embedUrl":"https://www.scmp.com/week-asia/politics/article/3306245/world-leaders-urge-global-south-inclusion-amid-us-china-tensions-and-gaza-conflict","name":"China raises tariffs on US goods to 125% as Xi calls on EU to resist 'unilateral bullying'","thumbnailUrl":["https://cdn.i-scmp.com/sites/default/files/d8/video/thumbnail/2025/04/11/CLEAN---thumbnail_0.jpg","https://cdn.i-scmp.com/sites/default/files/styles/wide_landscape/public/d8/video/thumbnail/2025/04/11/CLEAN---thumbnail_0.jpg?itok=TNg_NnlU","https://cdn.i-scmp.com/sites/default/files/styles/768x768/public/d8/video/thumbnail/2025/04/11/CLEAN---thumbnail_0.jpg?itok=MuICDeSc"],"uploadDate":"2025-04-11T14:18:33.000Z"} {"@context":"https://schema.org","@type":"ImageObject","url":"https://cdn.i-scmp.com/sites/default/files/styles/wide_landscape/public/d8/video/thumbnail/2025/04/11/CLEAN---thumbnail_0.jpg?itok=TNg_NnlU"} 02:40 China raises tariffs on US goods to 125% as Xi calls on EU to resist 'unilateral bullying' China raises tariffs on US goods to 125% as Xi calls on EU to resist 'unilateral bullying' The global stand-off can only change with the active participation of more nations by opening multiple channels of communication, Yilmaz said. Advertisement
-        </div>
-        
-        <a href="javascript:window.close()" class="back-btn">Close Report</a>
+    <div id="loading-section" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Analyzing article data...</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get the URL parameter from the current URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const articleUrl = urlParams.get('url');
+    <div id="content-section" style="display: none;">
+        <div class="container">
+            <h1>Article Analysis Report</h1>
             
-            if (!articleUrl) {
-                displayError("No article URL provided");
-                return;
-            }
-            
-            // Set the article URL link
-            document.getElementById('article-url').href = articleUrl;
-            
-            // Fetch the article data from the backend
-            fetchArticleData(articleUrl);
-        });
-        
-        async function fetchArticleData(articleUrl) {
-            try {
-                // Call the backend API to get article data
-                const response = await fetch(`http://localhost:8000/get_article?url=${encodeURIComponent(articleUrl)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`API error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (!data || !data.article) {
-                    throw new Error('No article data found');
-                }
-                
-                // Populate the report with the article data
-                populateReport(data.article);
-            } catch (error) {
-                displayError(`Failed to load article data: ${error.message}`);
-            }
-        }
-        
-        function populateReport(article) {
-            // Article basics
-            document.getElementById('article-title').textContent = article.title || 'Untitled Article';
-            document.getElementById('source-badge').textContent = article.source || 'Unknown Source';
-            
-            // Format the date
-            const processedDate = new Date(article.processed_at);
-            document.getElementById('processed-date').textContent = `Processed: ${processedDate.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })}`;
-            
-            // Get the analysis results
-            const results = article.analysis_results;
-            
-            // Summary
-            if (results.summary_result) {
-                document.getElementById('summary').textContent = results.summary_result;
-            }
-            
-            // Credibility data
-            if (results.credibility_result) {
-                const credibility = results.credibility_result;
-                
-                // Set percentages
-                if (credibility.source_reputation !== undefined) {
-                    document.getElementById('source-reputation').textContent = `${Math.round(credibility.source_reputation * 100)}%`;
-                    document.getElementById('source-reputation-reasoning').textContent = credibility.sourceReputationReasoning || '';
-                }
-                
-                if (credibility.title_content_alignment !== undefined) {
-                    document.getElementById('title-content').textContent = `${Math.round(credibility.title_content_alignment * 100)}%`;
-                    document.getElementById('title-content-reasoning').textContent = credibility.titleContentReasoning || '';
-                }
-                
-                if (credibility.overall_credibility !== undefined) {
-                    document.getElementById('overall-credibility').textContent = `${Math.round(credibility.overall_credibility * 100)}%`;
-                    document.getElementById('overall-conclusion').textContent = credibility.evaluation || credibility.overallConclusion || '';
-                }
-            }
-            
-            // Fake news / fact check
-            if (results.fake_news_result) {
-                const fakeNews = results.fake_news_result;
-                
-                // Update claim stats
-                document.getElementById('claims-stats').textContent = 
-                    `Claims analyzed: ${fakeNews.claims_analyzed || 0}, Claims verified: ${fakeNews.claims_verified || 0}, Verification score: ${Math.round((fakeNews.verification_score || 0) * 100)}%`;
-                
-                // Render verified claims
-                const verifiedClaimsContainer = document.getElementById('verified-claims');
-                verifiedClaimsContainer.innerHTML = ''; // Clear existing content
-                
-                if (fakeNews.verified_claims && fakeNews.verified_claims.length > 0) {
-                    fakeNews.verified_claims.forEach(claim => {
-                        const claimDiv = document.createElement('div');
-                        claimDiv.className = 'claim verified';
-                        
-                        claimDiv.innerHTML = `
-                            <h4>
-                                ${claim.claim}
-                                <span class="status-badge verified-badge">Verified</span>
-                            </h4>
-                            <p>${claim.analysis || ''}</p>
-                        `;
-                        
-                        verifiedClaimsContainer.appendChild(claimDiv);
-                    });
-                } else {
-                    verifiedClaimsContainer.innerHTML = '<p>No verified claims found.</p>';
-                }
-                
-                // Render unverified claims
-                const unverifiedClaimsContainer = document.getElementById('unverified-claims');
-                unverifiedClaimsContainer.innerHTML = ''; // Clear existing content
-                
-                if (fakeNews.unverified_claims && fakeNews.unverified_claims.length > 0) {
-                    fakeNews.unverified_claims.forEach(claim => {
-                        const claimDiv = document.createElement('div');
-                        claimDiv.className = 'claim unverified';
-                        
-                        claimDiv.innerHTML = `
-                            <h4>
-                                ${claim.claim}
-                                <span class="status-badge unverified-badge">Unverified</span>
-                            </h4>
-                            <p>${claim.analysis || ''}</p>
-                        `;
-                        
-                        unverifiedClaimsContainer.appendChild(claimDiv);
-                    });
-                } else {
-                    unverifiedClaimsContainer.innerHTML = '<p>No unverified claims found.</p>';
-                }
-            }
-            
-            // Sentiment analysis
-            if (results.sentiment_result) {
-                const sentiment = results.sentiment_result;
-                
-                // Emotional tone and subjectivity
-                document.getElementById('emotional-tone').textContent = sentiment.emotional_tone || 'Neutral';
-                
-                if (sentiment.subjectivity !== undefined) {
-                    document.getElementById('subjectivity').textContent = `${Math.round(sentiment.subjectivity * 100)}%`;
-                }
-                
-                // Polarity marker position (convert from -1...1 to 0...100)
-                if (sentiment.polarity !== undefined) {
-                    const polarityPercent = (sentiment.polarity + 1) * 50;
-                    document.querySelector('.sentiment-marker').style.left = `${polarityPercent}%`;
-                }
-                
-                // Bias assessment
-                if (sentiment.bias_assessment) {
-                    document.getElementById('bias-assessment').textContent = sentiment.bias_assessment;
-                }
-                
-                // Key phrases
-                const keyPhrasesContainer = document.getElementById('key-phrases');
-                keyPhrasesContainer.innerHTML = ''; // Clear existing content
-                
-                if (sentiment.key_phrases && sentiment.key_phrases.length > 0) {
-                    sentiment.key_phrases.forEach(phrase => {
-                        const span = document.createElement('span');
-                        span.className = 'key-phrase';
-                        span.textContent = phrase;
-                        keyPhrasesContainer.appendChild(span);
-                    });
-                }
-                
-                // Justification
-                const justificationContainer = document.getElementById('sentiment-justification');
-                justificationContainer.innerHTML = ''; // Clear existing content
-                
-                if (sentiment.detailed_justification && sentiment.detailed_justification.length > 0) {
-                    sentiment.detailed_justification.forEach(point => {
-                        const li = document.createElement('li');
-                        li.textContent = point;
-                        justificationContainer.appendChild(li);
-                    });
-                } else if (sentiment.justification) {
-                    // Handle string or split by periods
-                    const points = sentiment.justification.split('. ').filter(p => p.trim());
-                    points.forEach(point => {
-                        const li = document.createElement('li');
-                        li.textContent = point.trim();
-                        justificationContainer.appendChild(li);
-                    });
-                }
-            }
-            
-            // Article content
-            if (results.article_content) {
-                document.getElementById('article-content').textContent = results.article_content;
-            }
-        }
-        
-        function displayError(message) {
-            // Display error message in the page
-            const container = document.querySelector('.container');
-            container.innerHTML = `
-                <h1>Article Analysis Report</h1>
-                <div class="error">
-                    <h2>Error</h2>
-                    <p>${message}</p>
-                    <a href="javascript:window.close()" class="back-btn">Close Report</a>
+            <div class="header">
+                <div>
+                    <h2 id="article-title">Loading article...</h2>
+                    <div class="source-badge" id="source-badge">Loading</div>
+                    <span class="date" id="processed-date">Processing...</span>
                 </div>
-            `;
-        }
-    </script>
+            </div>
+            
+            <p><a href="" id="article-url" target="_blank">Original Article Link</a></p>
+            
+            <h2>Article Summary</h2>
+            <blockquote id="summary">
+                Loading article summary...
+            </blockquote>
+            
+            <h2>Credibility Analysis</h2>
+            <div class="score-container">
+                <div class="score-box">
+                    <h3>Source Reputation</h3>
+                    <div class="score-value" id="source-reputation">--</div>
+                    <p id="source-reputation-reasoning">Loading analysis...</p>
+                </div>
+                <div class="score-box">
+                    <h3>Title-Content Alignment</h3>
+                    <div class="score-value" id="title-content">--</div>
+                    <p id="title-content-reasoning">Loading analysis...</p>
+                </div>
+                <div class="score-box">
+                    <h3>Overall Credibility</h3>
+                    <div class="score-value" id="overall-credibility">--</div>
+                    <p id="overall-conclusion">Loading analysis...</p>
+                </div>
+            </div>
+            
+            <h2>Claims Verification</h2>
+            <p id="claims-stats">Loading claims data...</p>
+            
+            <h3>Verified Claims</h3>
+            <div id="verified-claims">
+                <p>Loading verified claims...</p>
+            </div>
+            
+            <h3>Unverified Claims</h3>
+            <div id="unverified-claims">
+                <p>Loading unverified claims...</p>
+            </div>
+            
+            <h2>Sentiment Analysis</h2>
+            <div class="score-container">
+                <div class="score-box">
+                    <h3>Emotional Tone</h3>
+                    <div class="score-value" id="emotional-tone">--</div>
+                </div>
+                <div class="score-box">
+                    <h3>Subjectivity</h3>
+                    <div class="score-value" id="subjectivity">--</div>
+                </div>
+            </div>
+            
+            <div class="sentiment-container">
+                <h3>Polarity Scale</h3>
+                <div class="sentiment-bar">
+                    <div class="sentiment-marker" style="left: 50%;"></div>
+                </div>
+                <div class="sentiment-labels">
+                    <span>Negative</span>
+                    <span>Neutral</span>
+                    <span>Positive</span>
+                </div>
+            </div>
+            
+            <h3>Bias Assessment</h3>
+            <p id="bias-assessment">Loading bias assessment...</p>
+            
+            <h3>Key Phrases</h3>
+            <div id="key-phrases">
+                <span class="key-phrase">Loading key phrases...</span>
+            </div>
+            
+            <h3>Justification</h3>
+            <ul id="sentiment-justification">
+                <li>Loading sentiment justification...</li>
+            </ul>
+            
+            <h2>Article Content</h2>
+            <div class="article-content" id="article-content">
+                Loading article content...
+            </div>
+            
+            <a href="#" class="back-btn" id="close-button">Close Report</a>
+        </div>
+    </div>
+
+    <script src="report.js"></script>
 </body>
 </html> 

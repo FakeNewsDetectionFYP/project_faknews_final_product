@@ -33,11 +33,12 @@
   "options_page": "options.html",
   "web_accessible_resources": [
     {
-      "resources": ["report.html", "report.css", "report.js", "chart.js"],
+      "resources": ["report.html", "report.css", "report.js", "icons/*"],
       "matches": ["<all_urls>"]
     }
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self'"
   }
 } 
