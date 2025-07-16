@@ -79,9 +79,6 @@ from bs4 import BeautifulSoup
 
 """# API Configuration and  Article Sample"""
 
-OPENAI_API_KEY = "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"  # Replace with your OpenAI key
-SEARCH_API_KEY = "fao8F6mEtmqZmW2y6gj3saPV"
-
 # Initialize OpenAI client
 client = OpenAI(api_key=OPENAI_API_KEY)
 
